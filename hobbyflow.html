@@ -1,0 +1,288 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>HobbyFlow — AI Hobby Tracker</title>
+<style>
+:root{--bg:#f5f7fb;--card:#fff;--text:#18202a;--muted:#6b7280;--line:#e5e7eb;--primary:#6d5dfc;--primary2:#8b7cff;--green:#16a34a;--red:#dc2626;--shadow:0 12px 35px rgba(20,24,40,.08)}
+*{box-sizing:border-box}body{margin:0;font-family:Inter,system-ui,-apple-system,Segoe UI,sans-serif;background:var(--bg);color:var(--text)}
+button,input,select{font:inherit}button{cursor:pointer;border:0}.app{display:flex;min-height:100vh}.side{width:245px;background:#111827;color:white;padding:22px 16px;position:fixed;inset:0 auto 0 0}.brand{font-size:22px;font-weight:800;padding:10px 12px 24px}.brand span{color:#9b8cff}.nav button{width:100%;text-align:left;background:transparent;color:#cbd5e1;padding:13px 14px;border-radius:12px;margin:3px 0}.nav button.active,.nav button:hover{background:#252c3c;color:#fff}.main{margin-left:245px;width:calc(100% - 245px);padding:28px;max-width:1500px}.top{display:flex;justify-content:space-between;align-items:center;margin-bottom:24px}.top h1{margin:0;font-size:30px}.sub{color:var(--muted);margin-top:5px}.primary{background:var(--primary);color:white;padding:11px 16px;border-radius:10px;font-weight:700}.secondary{background:#eef0ff;color:#5145cd;padding:10px 14px;border-radius:10px;font-weight:650}.danger{background:#fee2e2;color:#b91c1c;padding:9px 12px;border-radius:9px}.grid{display:grid;gap:18px}.stats{grid-template-columns:repeat(4,1fr)}.two{grid-template-columns:1.35fr .65fr}.three{grid-template-columns:repeat(3,1fr)}.card{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:20px;box-shadow:var(--shadow)}.stat .label{color:var(--muted);font-size:13px}.stat .num{font-size:28px;font-weight:800;margin:8px 0}.icon{font-size:24px}.progress{height:9px;background:#edf0f4;border-radius:99px;overflow:hidden}.bar{height:100%;background:linear-gradient(90deg,var(--primary),var(--primary2));border-radius:99px}.section{margin-top:22px}.section h2{font-size:19px;margin:0 0 14px}.session{display:flex;align-items:center;gap:14px;padding:14px 0;border-bottom:1px solid var(--line)}.session:last-child{border-bottom:0}.session .emoji{width:42px;height:42px;border-radius:12px;background:#f0efff;display:grid;place-items:center;font-size:22px}.grow{flex:1}.small{font-size:13px;color:var(--muted)}.badge{padding:5px 9px;border-radius:99px;background:#eef2ff;color:#5145cd;font-size:12px;font-weight:700}.success{background:#dcfce7;color:#15803d}.warning{background:#fef3c7;color:#a16207}.empty{text-align:center;color:var(--muted);padding:35px 10px}.page{display:none}.page.active{display:block}.modal{position:fixed;inset:0;background:rgba(10,15,25,.5);display:none;align-items:center;justify-content:center;padding:20px;z-index:20}.modal.open{display:flex}.modalbox{background:white;border-radius:18px;padding:24px;width:min(540px,100%);max-height:90vh;overflow:auto}.form{display:grid;gap:13px}.form label{font-size:13px;font-weight:700}.form input,.form select{width:100%;padding:11px;border:1px solid #d7dbe2;border-radius:10px;outline:none}.row{display:grid;grid-template-columns:1fr 1fr;gap:12px}.actions{display:flex;justify-content:flex-end;gap:10px;margin-top:18px}.hobby{display:flex;align-items:center;gap:12px;padding:14px;border:1px solid var(--line);border-radius:13px;margin-bottom:10px}.hobby .emoji{font-size:25px}.chart{height:220px;display:flex;align-items:end;gap:12px;padding:20px 5px 0}.col{flex:1;text-align:center}.barcol{height:170px;display:flex;align-items:end}.barcol i{display:block;width:100%;background:linear-gradient(#8b7cff,#6d5dfc);border-radius:8px 8px 2px 2px;min-height:5px}.ai{background:linear-gradient(135deg,#f0edff,#faf9ff);border:1px solid #ddd8ff}.ai h3{margin:0 0 8px}.ai strong{color:#5145cd}.recommend{padding:14px;border:1px solid #e4e0ff;background:#fff;border-radius:13px;margin-top:10px}.timer{text-align:center;padding:25px}.timer .clock{font-size:58px;font-weight:800;letter-spacing:2px;margin:12px}.toast{position:fixed;right:20px;bottom:20px;background:#111827;color:white;padding:13px 17px;border-radius:11px;display:none;z-index:50}.toast.show{display:block}.check{accent-color:var(--primary)}@media(max-width:900px){.side{width:70px}.brand{font-size:0}.brand:first-letter{font-size:22px}.nav button{font-size:0;text-align:center}.nav button::first-letter{font-size:20px}.main{margin-left:70px;width:calc(100% - 70px);padding:18px}.stats{grid-template-columns:1fr 1fr}.two,.three{grid-template-columns:1fr}}@media(max-width:550px){.stats{grid-template-columns:1fr}.top{align-items:flex-start;gap:10px;flex-direction:column}.row{grid-template-columns:1fr}}
+
+.chat-fab{position:fixed;right:24px;bottom:24px;width:58px;height:58px;border-radius:50%;background:var(--primary);color:#fff;font-size:24px;box-shadow:0 12px 30px rgba(109,93,252,.35);z-index:30}
+.chat-panel{position:fixed;right:24px;bottom:94px;width:min(390px,calc(100vw - 32px));height:590px;background:#fff;border:1px solid var(--line);border-radius:20px;box-shadow:0 20px 55px rgba(10,15,30,.2);display:none;flex-direction:column;overflow:hidden;z-index:30}
+.chat-panel.open{display:flex}.chat-head{background:linear-gradient(135deg,#6d5dfc,#8b7cff);color:#fff;padding:17px 18px;display:flex;align-items:center;gap:10px}.chat-head .grow{font-weight:800}.chat-close{background:rgba(255,255,255,.18);color:#fff;border-radius:8px;padding:7px 10px}
+.chat-body{flex:1;padding:14px;overflow:auto;background:#f8f9fc}.msg{max-width:86%;padding:10px 12px;border-radius:14px;margin:8px 0;line-height:1.45;font-size:14px;white-space:pre-wrap}.msg.bot{background:#fff;border:1px solid var(--line);margin-right:auto}.msg.user{background:#6d5dfc;color:#fff;margin-left:auto}.typing{opacity:.65;font-style:italic}.quick{display:flex;gap:7px;flex-wrap:wrap;padding:8px 12px;border-top:1px solid var(--line)}.quick button{background:#f0efff;color:#5145cd;padding:7px 9px;border-radius:9px;font-size:12px}.chat-input{display:flex;gap:8px;padding:10px 12px;border-top:1px solid var(--line)}.chat-input input{flex:1;border:1px solid #d7dbe2;border-radius:10px;padding:10px;outline:none}.chat-input button{background:var(--primary);color:#fff;border-radius:10px;padding:0 14px;font-weight:700}
+
+</style>
+</head>
+<body>
+<div class="app">
+<aside class="side">
+  <div class="brand">Hobby<span>Flow</span> 🤖</div>
+  <div class="nav">
+    <button class="active" onclick="showPage('dashboard',this)">🏠 Dashboard</button>
+    <button onclick="showPage('hobbies',this)">🎯 My Hobbies</button>
+    <button onclick="showPage('planner',this)">📅 Smart Planner</button>
+    <button onclick="showPage('analytics',this)">📊 Analytics</button>
+    <button onclick="showPage('ai',this)">🤖 AI Coach</button>
+  </div>
+</aside>
+
+<main class="main">
+<section id="dashboard" class="page active">
+  <div class="top"><div><h1 id="greeting">Good morning! 👋</h1><div class="sub">Your hobbies, goals and habits — automatically organized.</div></div><button class="primary" onclick="openModal()">+ Add Hobby</button></div>
+  <div class="grid stats">
+    <div class="card stat"><div class="icon">🔥</div><div class="label">Current streak</div><div class="num" id="streak">0 days</div><div class="small">Keep the momentum going</div></div>
+    <div class="card stat"><div class="icon">⏱️</div><div class="label">Time this week</div><div class="num" id="weekTime">0h 0m</div><div class="small">Across all hobbies</div></div>
+    <div class="card stat"><div class="icon">🎯</div><div class="label">Goal completion</div><div class="num" id="goalPct">0%</div><div class="small">Based on weekly targets</div></div>
+    <div class="card stat"><div class="icon">📚</div><div class="label">Active hobbies</div><div class="num" id="hobbyCount">0</div><div class="small">Your current interests</div></div>
+  </div>
+  <div class="grid two section">
+    <div class="card"><h2>Today's sessions</h2><div id="todaySessions"></div></div>
+    <div class="card ai"><h3>🤖 AI Insight</h3><p id="aiInsight">Add a hobby and some sessions to start receiving personalized insights.</p><button class="secondary" onclick="showPage('ai',document.querySelectorAll('.nav button')[4])">Open AI Coach</button></div>
+  </div>
+  <div class="grid two section">
+    <div class="card"><h2>Weekly activity</h2><div id="miniChart" class="chart"></div></div>
+    <div class="card"><h2>Quick automation</h2>
+      <div class="recommend"><b>⏰ Smart reminders</b><div class="small">Checks upcoming sessions every minute.</div></div>
+      <div class="recommend"><b>🔄 Adaptive planning</b><div class="small">Missed sessions can be moved to a better time.</div></div>
+      <div class="recommend"><b>📈 Weekly report</b><div class="small">Automatically analyzes your completed sessions.</div></div>
+    </div>
+  </div>
+</section>
+
+<section id="hobbies" class="page">
+  <div class="top"><div><h1>My Hobbies</h1><div class="sub">Manage hobbies, targets and progress.</div></div><button class="primary" onclick="openModal()">+ Add Hobby</button></div>
+  <div class="grid three" id="hobbyList"></div>
+</section>
+
+<section id="planner" class="page">
+  <div class="top"><div><h1>Smart Planner</h1><div class="sub">Your schedule adapts to your actual behavior.</div></div><button class="primary" onclick="generatePlan(true)">✨ Generate Plan</button></div>
+  <div class="card"><h2>This week's plan</h2><div id="planList"></div></div>
+  <div class="grid two section">
+    <div class="card"><h2>Automation rules</h2>
+      <div class="recommend">✅ Completion &gt; 90% → consider a slightly harder goal.</div>
+      <div class="recommend">⚠️ Completion &lt; 60% → shorten sessions and redistribute them.</div>
+      <div class="recommend">🔁 Missed session → offer automatic rescheduling.</div>
+      <div class="recommend">💤 5+ inactive days → trigger a re-engagement suggestion.</div>
+    </div>
+    <div class="card ai"><h3>Adaptive planner status</h3><p id="plannerInsight">Analyzing your activity...</p></div>
+  </div>
+</section>
+
+<section id="analytics" class="page">
+  <div class="top"><div><h1>Analytics</h1><div class="sub">Understand your consistency and time investment.</div></div></div>
+  <div class="grid stats">
+    <div class="card stat"><div class="label">Completed sessions</div><div class="num" id="completedCount">0</div></div>
+    <div class="card stat"><div class="label">Missed sessions</div><div class="num" id="missedCount">0</div></div>
+    <div class="card stat"><div class="label">Best hobby</div><div class="num" id="bestHobby">—</div></div>
+    <div class="card stat"><div class="label">Consistency</div><div class="num" id="consistency">0%</div></div>
+  </div>
+  <div class="grid two section"><div class="card"><h2>Hours by hobby</h2><div id="hobbyChart" class="chart"></div></div><div class="card ai"><h3>📊 Weekly AI report</h3><p id="weeklyReport"></p></div></div>
+</section>
+
+<section id="ai" class="page">
+  <div class="top"><div><h1>AI Coach 🤖</h1><div class="sub">Use the chatbot for personalized hobby discovery, planning and progress advice.</div></div></div>
+  <div class="grid two">
+    <div class="card"><h2>Discover a hobby</h2><p class="small">Choose interests and get a personalized recommendation.</p>
+      <div class="form">
+        <label>Interest</label><select id="interest"><option>Technology</option><option>Creativity</option><option>Fitness</option><option>Knowledge</option><option>Music</option><option>Outdoors</option></select>
+        <label>Available time</label><select id="avail"><option value="30">30 minutes</option><option value="60">1 hour</option><option value="120">2+ hours</option></select>
+        <button class="primary" onclick="recommendHobby()">Generate recommendation</button>
+      </div><div id="recommendation"></div>
+    </div>
+    <div class="card ai"><h2>🧠 Adaptive analysis</h2><p id="adaptiveAnalysis"></p><button class="secondary" onclick="generatePlan(true)">Adapt my plan</button></div>
+  </div>
+  <div class="card section"><h2>AI-generated goal ideas</h2><div id="goalIdeas"></div></div>
+</section>
+</main>
+</div>
+
+<div class="modal" id="modal"><div class="modalbox">
+  <h2>Add a hobby</h2>
+  <div class="form">
+    <div class="row"><div><label>Hobby name</label><input id="hName" placeholder="e.g. Coding"></div><div><label>Emoji</label><input id="hEmoji" value="🎯"></div></div>
+    <div class="row"><div><label>Weekly target (minutes)</label><input id="hTarget" type="number" value="180" min="30"></div><div><label>Preferred time</label><select id="hTime"><option>Morning</option><option>Afternoon</option><option selected>Evening</option><option>Night</option></select></div></div>
+    <div><label>Goal</label><input id="hGoal" placeholder="e.g. Build a JavaScript project"></div>
+  </div>
+  <div class="actions"><button class="secondary" onclick="closeModal()">Cancel</button><button class="primary" onclick="addHobby()">Create hobby</button></div>
+</div></div>
+
+<div class="modal" id="timerModal"><div class="modalbox"><div class="timer"><div id="timerTitle" class="small"></div><div class="clock" id="clock">00:00</div><div class="small">Session timer</div><div class="actions" style="justify-content:center"><button class="secondary" onclick="pauseTimer()">Pause</button><button class="primary" onclick="finishTimer()">Finish</button></div></div></div></div>
+
+<button class="chat-fab" onclick="toggleChat()" title="Open AI Hobby Coach">🤖</button>
+<div class="chat-panel" id="chatPanel">
+  <div class="chat-head">
+    <div style="font-size:24px">🤖</div>
+    <div class="grow">HobbyFlow AI Coach<div style="font-size:11px;font-weight:500;opacity:.85">Personalized hobby assistant</div></div>
+    <button class="chat-close" onclick="toggleChat()">✕</button>
+  </div>
+  <div class="chat-body" id="chatBody"></div>
+  <div class="quick">
+    <button onclick="quickChat('Suggest a hobby for me')">Suggest a hobby</button>
+    <button onclick="quickChat('Analyze my progress')">Analyze progress</button>
+    <button onclick="quickChat('Make my next week plan')">Plan my week</button>
+    <button onclick="quickChat('How can I stay consistent?')">Stay consistent</button>
+  </div>
+  <form class="chat-input" onsubmit="sendChat(event)">
+    <input id="chatInput" autocomplete="off" placeholder="Ask about hobbies, goals or your routine...">
+    <button>Send</button>
+  </form>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+const KEY='hobbyflow_v1';
+let data=JSON.parse(localStorage.getItem(KEY)||'null')||{hobbies:[],sessions:[],plan:[],name:'User'};
+let timer=null,timerSec=0,timerHobby=null;
+
+function save(){localStorage.setItem(KEY,JSON.stringify(data));}
+function esc(s){return String(s).replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[m]));}
+function toast(msg){const t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),2600);}
+function showPage(id,btn){document.querySelectorAll('.page').forEach(x=>x.classList.remove('active'));document.getElementById(id).classList.add('active');document.querySelectorAll('.nav button').forEach(x=>x.classList.remove('active'));if(btn)btn.classList.add('active');render();}
+function openModal(){document.getElementById('modal').classList.add('open');}
+function closeModal(){document.getElementById('modal').classList.remove('open');}
+function addHobby(){
+ const name=document.getElementById('hName').value.trim(); if(!name)return toast('Enter a hobby name.');
+ data.hobbies.push({id:Date.now(),name,emoji:document.getElementById('hEmoji').value||'🎯',target:+document.getElementById('hTarget').value||180,time:document.getElementById('hTime').value,goal:document.getElementById('hGoal').value.trim()||'Make steady progress'});
+ save();closeModal();generatePlan(false);render();toast('Hobby added and plan generated!');
+}
+function fmtMin(m){return Math.floor(m/60)+'h '+m%60+'m';}
+function dateKey(d=new Date()){return d.toISOString().slice(0,10);}
+function startOfWeek(d=new Date()){let x=new Date(d);let day=x.getDay();let diff=(day+6)%7;x.setDate(x.getDate()-diff);x.setHours(0,0,0,0);return x;}
+function weekDays(){let s=startOfWeek();return Array.from({length:7},(_,i)=>{let d=new Date(s);d.setDate(s.getDate()+i);return d;});}
+function completedFor(hid){return data.sessions.filter(s=>s.hid===hid&&s.status==='done').reduce((a,s)=>a+s.minutes,0);}
+function totalWeek(){let s=startOfWeek();return data.sessions.filter(x=>x.status==='done'&&new Date(x.date)>=s).reduce((a,x)=>a+x.minutes,0);}
+function streak(){
+ let set=new Set(data.sessions.filter(x=>x.status==='done').map(x=>x.date)), d=new Date(), n=0;
+ while(set.has(dateKey(d))){n++;d.setDate(d.getDate()-1);} return n;
+}
+function goalPct(){if(!data.hobbies.length)return 0;let p=data.hobbies.map(h=>Math.min(1,completedFor(h)/h.target));return Math.round(p.reduce((a,b)=>a+b,0)/data.hobbies.length*100);}
+function generatePlan(manual){
+ const days=weekDays(); data.plan=[];
+ data.hobbies.forEach((h,idx)=>{
+   let target=Math.max(30,Math.round(h.target/Math.max(1,Math.ceil(h.target/60))));
+   let count=Math.max(2,Math.ceil(h.target/target)); count=Math.min(count,5);
+   for(let i=0;i<count;i++){
+     let d=days[(idx*2+i*2)%7], mins=Math.min(target,h.target);
+     data.plan.push({id:Date.now()+Math.random(),hid:h.id,date:dateKey(d),minutes:mins,status:'planned',time:h.time});
+   }
+ });
+ save(); if(manual)toast('Adaptive weekly plan generated.');
+ renderPlan();
+}
+function render(){
+ const hr=new Date().getHours();document.getElementById('greeting').textContent=(hr<12?'Good morning':hr<18?'Good afternoon':'Good evening')+'! 👋';
+ document.getElementById('streak').textContent=streak()+' days';document.getElementById('weekTime').textContent=fmtMin(totalWeek());document.getElementById('goalPct').textContent=goalPct()+'%';document.getElementById('hobbyCount').textContent=data.hobbies.length;
+ document.getElementById('completedCount').textContent=data.sessions.filter(s=>s.status==='done').length;document.getElementById('missedCount').textContent=data.sessions.filter(s=>s.status==='missed').length;
+ let best=data.hobbies.slice().sort((a,b)=>completedFor(b.id)-completedFor(a.id))[0];document.getElementById('bestHobby').textContent=best?best.name:'—';
+ let total=data.sessions.length, done=data.sessions.filter(s=>s.status==='done').length;document.getElementById('consistency').textContent=total?Math.round(done/total*100)+'%':'0%';
+ renderToday();renderHobbies();renderPlan();renderCharts();renderAI();renderGoals();
+}
+function renderToday(){
+ let today=dateKey(), items=data.plan.filter(x=>x.date===today);
+ if(!items.length){document.getElementById('todaySessions').innerHTML='<div class="empty">No sessions today. Generate a smart plan to schedule your hobbies.</div>';return;}
+ document.getElementById('todaySessions').innerHTML=items.map(x=>{let h=data.hobbies.find(h=>h.id===x.hid);return h?`<div class="session"><div class="emoji">${h.emoji}</div><div class="grow"><b>${esc(h.name)}</b><div class="small">${x.minutes} min · ${x.time}</div></div><span class="badge ${x.status==='done'?'success':''}">${x.status==='done'?'Done':'Planned'}</span>${x.status!=='done'?`<button class="secondary" onclick="startSession(${h.id},${x.id})">Start</button>`:''}</div>`:''}).join('');
+}
+function renderHobbies(){
+ let el=document.getElementById('hobbyList');if(!data.hobbies.length){el.innerHTML='<div class="card empty">No hobbies yet. Add your first hobby.</div>';return;}
+ el.innerHTML=data.hobbies.map(h=>{let m=completedFor(h.id),p=Math.min(100,Math.round(m/h.target*100));return `<div class="card"><div class="hobby" style="border:0;padding:0 0 14px;margin:0"><div class="emoji">${h.emoji}</div><div class="grow"><b>${esc(h.name)}</b><div class="small">${esc(h.goal)}</div></div><button class="danger" onclick="deleteHobby(${h.id})">Delete</button></div><div style="display:flex;justify-content:space-between;margin:8px 0"><span class="small">${fmtMin(m)} / ${fmtMin(h.target)}</span><b>${p}%</b></div><div class="progress"><div class="bar" style="width:${p}%"></div></div></div>`}).join('');
+}
+function deleteHobby(id){data.hobbies=data.hobbies.filter(h=>h.id!==id);data.plan=data.plan.filter(x=>x.hid!==id);save();render();toast('Hobby removed.');}
+function renderPlan(){
+ let el=document.getElementById('planList');if(!data.plan.length){el.innerHTML='<div class="empty">No plan yet. Click Generate Plan.</div>';return;}
+ let names=['Mon','Tue','Wed','Thu','Fri','Sat','Sun'];
+ el.innerHTML=weekDays().map((d,i)=>{let ds=dateKey(d),items=data.plan.filter(x=>x.date===ds);return `<div style="padding:12px 0;border-bottom:1px solid var(--line)"><b>${names[i]} · ${d.toLocaleDateString(undefined,{month:'short',day:'numeric'})}</b>${items.length?items.map(x=>{let h=data.hobbies.find(h=>h.id===x.hid);return h?`<div class="session"><div class="emoji">${h.emoji}</div><div class="grow"><b>${esc(h.name)}</b><div class="small">${x.minutes} min · ${x.time}</div></div><span class="badge ${x.status==='done'?'success':x.status==='missed'?'warning':''}">${x.status}</span>${x.status==='planned'?`<button class="secondary" onclick="startSession(${h.id},${x.id})">Start</button>`:''}</div>`:''}).join(''):'<div class="small" style="padding:10px 0">No sessions</div>'}</div>`}).join('');
+ let done=data.sessions.filter(s=>s.status==='done').length, all=data.sessions.length;document.getElementById('plannerInsight').textContent=all&&done/all<.6?'Your completion rate is below 60%. The next generated plan will use shorter sessions.':all&&done/all>.9?'You are highly consistent. Consider gradually increasing one goal.':'Your plan is balanced. Keep collecting activity data so the adaptive planner can improve it.';
+}
+function renderCharts(){
+ let vals=weekDays().map(d=>data.sessions.filter(s=>s.status==='done'&&s.date===dateKey(d)).reduce((a,s)=>a+s.minutes,0)),max=Math.max(60,...vals);
+ document.getElementById('miniChart').innerHTML=vals.map((v,i)=>`<div class="col"><div class="barcol"><i style="height:${Math.max(4,v/max*100)}%"></i></div><div class="small">${['M','T','W','T','F','S','S'][i]}</div></div>`).join('');
+ let hv=data.hobbies.map(h=>({h,v:completedFor(h.id)})),hm=Math.max(60,...hv.map(x=>x.v));
+ document.getElementById('hobbyChart').innerHTML=hv.length?hv.map(x=>`<div class="col"><div class="barcol"><i style="height:${Math.max(4,x.v/hm*100)}%"></i></div><div class="small">${esc(x.h.name.slice(0,9))}</div></div>`).join(''):'<div class="empty">Add hobbies to see analytics.</div>';
+}
+function renderAI(){
+ let insight='Add hobbies and complete a few sessions to unlock adaptive insights.';
+ if(data.hobbies.length){
+  let c=data.sessions.length?data.sessions.filter(s=>s.status==='done').length/data.sessions.length:0;
+  if(c<.6&&data.sessions.length)insight='Your completion rate is lower than your planned workload. Try shorter sessions and more frequent practice.';
+  else if(c>.9&&data.sessions.length)insight='Excellent consistency. You can gradually increase the difficulty of one hobby goal.';
+  else insight='Your system is learning your routine. Complete more sessions and the AI coach will identify your strongest time patterns.';
+ }
+ document.getElementById('aiInsight').textContent=insight;document.getElementById('adaptiveAnalysis').textContent=insight;
+}
+function renderGoals(){
+ document.getElementById('goalIdeas').innerHTML=data.hobbies.length?data.hobbies.map(h=>`<div class="recommend"><b>${h.emoji} ${esc(h.name)}</b><div class="small">AI goal idea: Turn “${esc(h.goal)}” into 3 small weekly milestones and finish one milestone per session.</div></div>`).join(''):'<div class="empty">Add a hobby first.</div>';
+}
+function recommendHobby(){
+ let i=document.getElementById('interest').value,t=+document.getElementById('avail').value;
+ const map={Technology:['Web Development','Python Projects','3D Modeling'],Creativity:['Digital Art','Photography','Creative Writing'],Fitness:['Yoga','Running','Calisthenics'],Knowledge:['Reading','Language Learning','Chess'],Music:['Guitar','Music Production','Singing'],Outdoors:['Photography','Gardening','Hiking']};
+ let pick=map[i][t>=60?1:0];
+ document.getElementById('recommendation').innerHTML=`<div class="recommend"><b>✨ ${pick}</b><p>Based on your interest in <strong>${i}</strong> and ${t} minutes of available time, this hobby fits your current profile.</p><span class="badge">AI recommendation</span><button class="secondary" style="float:right" onclick="quickAdd('${pick}')">Add hobby</button></div>`;
+}
+function quickAdd(name){document.getElementById('hName').value=name;document.getElementById('hEmoji').value='✨';document.getElementById('hTarget').value=180;document.getElementById('hGoal').value='Build consistency and make steady progress';openModal();}
+function startSession(hid,pid){
+ timerHobby={hid,pid};timerSec=0;document.getElementById('timerTitle').textContent=(data.hobbies.find(h=>h.id===hid)||{}).name||'Hobby';document.getElementById('timerModal').classList.add('open');updateClock();clearInterval(timer);timer=setInterval(()=>{timerSec++;updateClock()},1000);
+}
+function updateClock(){document.getElementById('clock').textContent=String(Math.floor(timerSec/60)).padStart(2,'0')+':'+String(timerSec%60).padStart(2,'0');}
+function pauseTimer(){if(timer){clearInterval(timer);timer=null;toast('Timer paused.');}else{timer=setInterval(()=>{timerSec++;updateClock()},1000);toast('Timer resumed.');}}
+function finishTimer(){
+ clearInterval(timer);timer=null;document.getElementById('timerModal').classList.remove('open');
+ let p=data.plan.find(x=>x.id===timerHobby.pid);if(p)p.status='done';
+ data.sessions.push({hid:timerHobby.hid,date:dateKey(),minutes:Math.max(1,Math.round(timerSec/60)),status:'done'});save();render();toast('Session completed! Progress updated automatically.');timerHobby=null;
+}
+function markOldMissed(){
+ let today=dateKey();data.plan.forEach(p=>{if(p.date<today&&p.status==='planned')p.status='missed'});save();
+}
+
+let chatHistory = [];
+function toggleChat(){
+  const panel=document.getElementById('chatPanel');
+  panel.classList.toggle('open');
+  if(panel.classList.contains('open') && !document.getElementById('chatBody').children.length){
+    addChat('bot','Hi! I’m your HobbyFlow AI Coach 🤖\nTell me what you enjoy, how much time you have, or ask me to analyze your hobby routine.');
+  }
+}
+function addChat(role,text,typing=false){
+  const body=document.getElementById('chatBody'), div=document.createElement('div');
+  div.className='msg '+role+(typing?' typing':''); div.textContent=text; body.appendChild(div); body.scrollTop=body.scrollHeight; return div;
+}
+function quickChat(text){document.getElementById('chatInput').value=text;document.querySelector('.chat-input').requestSubmit();}
+function buildUserContext(){
+  const completed=data.sessions.filter(s=>s.status==='done');
+  const missed=data.sessions.filter(s=>s.status==='missed');
+  return {
+    hobbies:data.hobbies.map(h=>({name:h.name,targetMinutes:h.target,preferredTime:h.time,goal:h.goal,completedMinutes:completedFor(h.id)})),
+    weeklyMinutes:totalWeek(),
+    currentStreak:streak(),
+    goalCompletion:goalPct(),
+    completedSessions:completed.length,
+    missedSessions:missed.length,
+    plannedSessions:data.plan.filter(x=>x.status==='planned').length
+  };
+}
+async function sendChat(e){
+  e.preventDefault();
+  const input=document.getElementById('chatInput'), text=input.value.trim();
+  if(!text)return;
+  input.value=''; addChat('user',text); chatHistory.push({role:'user',content:text});
+  const typing=addChat('bot','Thinking…',true);
+  try{
+    const r=await fetch('/api/chat',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({message:text,history:chatHistory.slice(-12),context:buildUserContext()})});
+    const out=await r.json(); typing.remove();
+    if(!r.ok) throw new Error(out.error||'Chat request failed');
+    addChat('bot',out.reply||'I could not generate a response.');
+    chatHistory.push({role:'assistant',content:out.reply||''});
+  }catch(err){
+    typing.remove();
+    addChat('bot','I can’t reach the AI server right now. Start the backend with the setup instructions, then try again.\n\nTechnical detail: '+err.message);
+  }
+}
+
+function init(){markOldMissed();if(!data.plan.length&&data.hobbies.length)generatePlan(false);render();}
+init();
+</script>
+</body>
+</html>
